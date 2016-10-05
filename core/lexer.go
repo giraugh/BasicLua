@@ -45,6 +45,7 @@ func Lex(input string) (tokenList, serror) {
     case "default":
       if buff == " " {buff = ""}
       if char == "\n" {buff = ""}
+      if buff == "end" {buff = ""} //ignored
       if buff == "print" {
         state = "arg"
         toks = toks.add("PRINT","")
