@@ -47,37 +47,63 @@ func Lex(input string) (tokenList, serror) {
       if char == "\n" {buff = ""}
       if buff == "end" {buff = ""} //ignored
       if buff == "print" {
-        state = "arg"
+        state = "parg"
         toks = toks.add("PRINT","")
         buff = ""
       }
-    case "arg":
-        //looking for string chars
-        if char == "\n" {
-          //Error, was expecting a string to start
-          return nil, err("Expecting a quote or expression, got a newline.", curLine, curLineIndex)
-        }
-        if buff == " " {
-          buff = ""
-        }
+      if buff == "let" {
+        state = "larg1"
+        toks = toks.add("LET","")
+        buff = ""
+      }
+    case "larg1": //Set argument 1
+      if char == "\n" {
+        //Error, was expecting a variable name
+        return nil, err("Expecting a string, number or expression, got a newline.", curLine, curLineIndex)
+      }
 
-        //expression start char
-        if char == "(" {
-          state = "expression"
+      if char == " " {
+        if len(buff) > 1 {
+          state = "larg2"
+          toks = toks.add("VARNAME", buff[:len(buff)-1])
+          buff = ""
+        } else {
           buff = ""
         }
+      }
+    case "larg2": //Set argument 1
+      if char == " " || char == "\n" {
+        state = "default"
+        toks = toks.add("VARVAL", buff[:len(buff)-1])
+        buff = ""
+      }
+    case "parg": //Print argument
+      if char == "\n" {
+        //Error, was expecting a string to start
+        return nil, err("Expecting a string or expression, got a newline.", curLine, curLineIndex)
+      }
 
-        //string start char
-        if char == "\"" {
-          state = "string"
-          buff = ""
-        }
+      if buff == " " {
+        buff = ""
+      }
+
+      //expression start char
+      if char == "(" {
+        state = "expression"
+        buff = ""
+      }
+
+      //string start char
+      if char == "\"" {
+        state = "string"
+        buff = ""
+      }
     case "string":
-        if char == "\"" {
-          toks = toks.add("STRING", buff[:len(buff)-1])
-          state = "default"
-          buff = ""
-        }
+      if char == "\"" {
+        toks = toks.add("STRING", buff[:len(buff)-1])
+        state = "default"
+        buff = ""
+      }
     case "expression":
       if char == ")" {
         toks = toks.add("EXPRESSION", buff[:len(buff)-1])

@@ -1,12 +1,22 @@
 package basic
 
+import (
+  "fmt"
+)
+
 type serror string
 
 /* Translate Function */
-func Translate(input string) (string, string) {
+func Translate(input string, verbose bool) (string, string) {
 
   //Lex Input
   toks, err := Lex(input)
+
+  if verbose {
+    fmt.Println("\n")
+    fmt.Println(toks)
+    fmt.Println("\n")
+  }
 
   if err != "" {
       return "", string(err)

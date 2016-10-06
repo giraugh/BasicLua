@@ -63,7 +63,7 @@ func compile(path string) {
 	contents := string(bs)
 
 	//translate
-	translated, err := basic.Translate(contents)
+	translated, err := basic.Translate(contents, verbose)
 	if err != "" {
 		fmt.Println(" ")
 		fmt.Println("------------------------------------------------------------------")

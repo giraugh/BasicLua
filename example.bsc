@@ -1,4 +1,4 @@
 PRINT "YOWHAT?"
 PRINT (3 + 2)
-SET A 1
+LET A 1
 END
